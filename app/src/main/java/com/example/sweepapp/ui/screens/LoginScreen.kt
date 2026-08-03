@@ -22,13 +22,13 @@ fun LoginScreen(
         OutlinedTextField(
             value = email,
             onValueChange = { email = it},
-            label = { org.w3c.dom.Text("Email") },
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = password,
             onValueChange = { password = it},
-            label = { org.w3c.dom.Text("Password") },
+            label = { Text("Password") },
             modifier = Modifier.fillMaxWidth()
         )
         Button(
