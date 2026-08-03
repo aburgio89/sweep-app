@@ -15,7 +15,7 @@ import com.example.sweepapp.ui.screens.LoginScreen
 import com.example.sweepapp.ui.screens.SweepScreen
 
 @Composable
-fun sweepAppNavGraph(
+fun SweepAppNavGraph(
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
