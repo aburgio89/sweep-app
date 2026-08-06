@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -52,8 +53,9 @@ fun SweepScreen(
     ScreenScaffold(
         title = "Sweep $sweepNumber: $sweepName") {
         Image(
-            painter = painterResource(id = R.drawable.monsterph),
+            painter = painterResource(id = R.drawable.sweep_monster),
             contentDescription = null,
+            colorFilter = ColorFilter.tint(accentColor),
             alignment = Alignment.Center,
             modifier = Modifier.size(200.dp)
         )
