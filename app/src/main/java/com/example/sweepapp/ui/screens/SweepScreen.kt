@@ -1,48 +1,142 @@
 package com.example.sweepapp.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.sweepapp.R
+import com.example.sweepapp.ui.theme.SweepAccentColors
+import com.example.sweepapp.ui.theme.SweepAppTheme
 
 @Composable
 fun SweepScreen(
     sweepNumber: Int,
     sweepName: String,
     totalSweeps: Int,
+    description: String = stringArrayResource(id= R.array.sweep_descriptions)[sweepNumber -1],
+    accentColor: Color = SweepAccentColors[sweepNumber -1],
     onComplete: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onFaqClick: () -> Unit = {}
 ) {
     val isLastSweep = sweepNumber == totalSweeps
+    val doneButtonTextColor = if (accentColor.luminance() > 0.5f) Color(0xFF32323B) else Color.White
 
-    ScreenScaffold(title = "Sweep $sweepNumber: $sweepName") {
+    ScreenScaffold(
+        title = "Sweep $sweepNumber: $sweepName") {
+        Image(
+            painter = painterResource(id = R.drawable.monsterph),
+            contentDescription = null,
+            alignment = Alignment.Center,
+            modifier = Modifier.size(200.dp)
+        )
+
+        Text(
+            text = description,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "Sweep $sweepNumber of $totalSweeps",
             textAlign = TextAlign.Center
         )
         LinearProgressIndicator(
-            progress = { sweepNumber / totalSweeps.toFloat()},
-            modifier = Modifier.fillMaxWidth()
+            progress = { sweepNumber / totalSweeps.toFloat() },
+            color = accentColor,
+            modifier = Modifier.fillMaxWidth().height(8.dp)
+                .padding(horizontal = 4.dp)
         )
-        Text(
-            //PLACEHOLDER
-            text = "Placeholder for $sweepName sweep checklist/content."
-        )
-        Button(
-            onClick = onComplete,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (isLastSweep) "Complete Final Sweep" else "Complete & Continue")
-        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
         OutlinedButton(
-            onClick = onCancel,
-            modifier = Modifier.fillMaxWidth()
+            onClick = onFaqClick,
+            shape = CircleShape,
+            border = BorderStroke(4.dp, accentColor),
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = accentColor),
+            modifier = Modifier.size(60.dp)
         ) {
-            Text("Stop")
+            Text("?", style = MaterialTheme.typography.titleLarge)
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedButton(
+                onClick = onCancel,
+                shape = RoundedCornerShape(8.dp),
+                border = BorderStroke(4.dp, accentColor),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = accentColor),
+                modifier = Modifier.size(64.dp)
+            ) {
+                Icon(
+                    Icons.Filled.Close,
+                    contentDescription = "Cancel Sweeps",
+                    tint = accentColor,
+                    modifier = Modifier.size(60.dp))
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Button(
+                onClick = onComplete,
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = accentColor,
+                    contentColor = doneButtonTextColor
+                ),
+                modifier = Modifier.weight(1f).height(64.dp)
+            ) {
+                Text(if (isLastSweep) "Complete!" else "Next!",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold)
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SweepPreview() {
+    SweepAppTheme {
+        SweepScreen(
+            sweepNumber = 3,
+            sweepName = "Dishes",
+            totalSweeps = 7,
+            onComplete = {},
+            onCancel = {}
+        )
     }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sweep_descriptions">
+        <item>PLACEHOLDER: Gather all trash into a trash bag.</item>
+        <item>PLACEHOLDER: Gather all recyclable items into a recycle container.</item>
+        <item>PLACEHOLDER: Find and remove all dishes, glasses, silverware, etc. Move it all to the sink for now.</item>
+        <item>PLACEHOLDER: Pick up every item of dirty clothing and move it to the designated laundry container.</item>
+        <item>PLACEHOLDER: Scan the room and collect all clutter— this means anything that is not furniture
+            or a permanent part of the room, whether it belongs there or not. Put everything in the same container for now.</item>
+        <item>PLACEHOLDER: Wipe down all horizontal surfaces. Depending on your floor type, sweep, mop, or vacuum. </item>
+        <item>PLACEHOLDER: Time to return everything to its home. Go through the clutter container one item at a time,</item>
+            starting with items that live in this room. Then return items that live in other rooms.
+    </string-array>
+</resources>

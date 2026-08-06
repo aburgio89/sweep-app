@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,12 +28,19 @@ import androidx.compose.ui.unit.dp
 fun ScreenScaffold(
     title: String,
     onBack: ( () -> Unit)? = null,
-    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit
+    titleContent: (@Composable () -> Unit)? = null,
+    content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit,
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-            title = { Text(title) },
+            CenterAlignedTopAppBar(
+                title = {
+                    if (titleContent != null) {
+                        titleContent()
+                    }
+                    else {
+                        Text(title, style = MaterialTheme.typography.headlineMedium) }
+                },
             navigationIcon = {
                 if (onBack != null) {
                     IconButton(onClick = onBack) {
