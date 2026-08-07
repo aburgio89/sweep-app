@@ -1,15 +1,18 @@
 package com.example.sweepapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.sweepapp.data.AppDataRepository
 import com.example.sweepapp.ui.screens.AccountSettingsScreen
 import com.example.sweepapp.ui.screens.ConfirmationScreen
 import com.example.sweepapp.ui.screens.DoomBoxCaptureScreen
+import com.example.sweepapp.ui.screens.DoomBoxListScreen
 import com.example.sweepapp.ui.screens.HomeScreen
 import com.example.sweepapp.ui.screens.LoginScreen
 import com.example.sweepapp.ui.screens.SweepScreen
@@ -39,6 +42,9 @@ fun SweepAppNavGraph(
                 },
                 onOpenSettings = {
                     navController.navigate(Screen.Settings.route)
+                },
+                onViewDoomBox = {
+                    navController.navigate(Screen.DoomBoxList.route)
                 }
             )
         }
@@ -47,6 +53,13 @@ fun SweepAppNavGraph(
         composable(Screen.Settings.route) {
             AccountSettingsScreen(
                 onBack = { navController.popBackStack() })
+        }
+
+        //DOOM LIST
+        composable(Screen.DoomBoxList.route) {
+            DoomBoxListScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
 
         //SWEEP
@@ -87,6 +100,13 @@ fun SweepAppNavGraph(
             })
         ) { backStackEntry ->
             val wasFullSweep = backStackEntry.arguments?.getBoolean("full") ?: true
+
+            LaunchedEffect(backStackEntry) {
+                if (wasFullSweep) {
+                    AppDataRepository.recordFullSweepCompleted()
+                }
+            }
+
             DoomBoxCaptureScreen(
                 onDone = {
                     navController.navigate(Screen.Confirmation.route + "?full=$wasFullSweep")

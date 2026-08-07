@@ -7,6 +7,7 @@ package com.example.sweepapp.navigation
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object Home : Screen("home")
+    data object DoomBoxList : Screen("doom_box_list")
     data object Settings : Screen("settings")
     data object DoomBoxCapture : Screen("doombox_capture")
     data object Confirmation : Screen("confirmation")
