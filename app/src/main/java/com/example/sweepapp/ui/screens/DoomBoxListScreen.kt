@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.sweepapp.data.AppDataRepository
@@ -32,6 +33,8 @@ import com.example.sweepapp.data.DoomBoxEntry
 import com.example.sweepapp.navigation.Screen
 import com.example.sweepapp.ui.theme.SweepAccentColors
 import com.example.sweepapp.ui.theme.SweepAppTheme
+import com.example.sweepapp.ui.theme.SweepBackground
+import com.example.sweepapp.ui.theme.SweepDarksOnly
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -54,7 +57,7 @@ fun DoomBoxListScreen(
                 itemsIndexed(outstandingEntries, key = { _, entry -> entry.id }) { index, entry ->
                     DoomBoxEntryCard(
                         entry = entry,
-                        accentColor = SweepAccentColors[index % SweepAccentColors.size],
+                        accentColor = SweepDarksOnly[index % SweepDarksOnly.size],
                         onResolveClick = { entryPendingResolve = entry }
                     )
                 }
@@ -64,19 +67,30 @@ fun DoomBoxListScreen(
     entryPendingResolve?.let { entry ->
         AlertDialog(
             onDismissRequest = { entryPendingResolve = null },
-            title = { Text("Resolve this item?") },
-            text = { Text("\"${entry.name}\" will be removed. This cannot be undone.")},
+            title = {
+                Text(
+                    text = "Resolve this item?",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = SweepBackground
+                )
+                    },
+            text = {
+                Text(
+                    text = "\"${entry.name}\" will be removed. This cannot be undone.",
+                    color = SweepBackground)
+                   },
+
             confirmButton = {
                 TextButton(onClick = {
                     AppDataRepository.resolveDoomBoxEntry(entry.id)
                     entryPendingResolve = null
                 }) {
-                    Text("Resolve")
+                    Text("Resolve", color = SweepBackground, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton =  {
                 TextButton(onClick = { entryPendingResolve = null }) {
-                    Text("Cancel")
+                    Text("Cancel", color = SweepBackground)
                 }
             }
         )
