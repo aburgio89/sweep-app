@@ -29,13 +29,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.sweepapp.data.AccountSettings
 import com.example.sweepapp.data.AccountSettingsRepository
+import com.example.sweepapp.data.AuthRepository
 import com.example.sweepapp.ui.theme.SweepAccent
 import com.example.sweepapp.ui.theme.SweepBackground
 import com.example.sweepapp.ui.theme.SweepPrimary
 
 @Composable
 fun AccountSettingsScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onSignedOut: () -> Unit
 ) {
     val settings by AccountSettingsRepository.settings.collectAsState()
 
@@ -46,7 +48,10 @@ fun AccountSettingsScreen(
         onDoomBoxAlertsEnabledChange = { AccountSettingsRepository.updateDoomBoxAlertsEnabled(it) },
         onDoomBoxIntervalChange = { AccountSettingsRepository.updateDoomBoxAlertIntervalWeeks(it) },
         onInactivityAlertsEnabledChange = { AccountSettingsRepository.updateInactivityAlertsEnabled(it) },
-        onSignOut = {} //Implement with Firebase Auth later
+        onSignOut = {
+            AuthRepository.signOut()
+            onSignedOut()
+        }
     )
 }
 

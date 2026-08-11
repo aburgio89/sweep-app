@@ -29,4 +29,8 @@ object AccountSettingsRepository {
     fun updateInactivityAlertsEnabled(enabled: Boolean) {
         _settings.value = _settings.value.copy(inactivityAlertsEnabled = enabled)
     }
+
+    fun updateEmailFromAuth(email: String) {
+        _settings.value = _settings.value.copy(email = email)
+    }
 }

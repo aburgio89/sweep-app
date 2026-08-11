@@ -11,23 +11,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,17 +36,24 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sweepapp.R
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    onLogIn: () -> Unit
+    onLogin: suspend (email: String, password: String) -> Result<Unit>,
+    onLoginSuccess: () -> Unit,
+    onNavigateToSignUp: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("")}
+    var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
 
     var logoVisible by remember { mutableStateOf(false)}
     var textVisible by remember { mutableStateOf(false)}
@@ -123,15 +131,41 @@ fun LoginScreen(
                     onValueChange = { password = it},
                     label = { Text("Password") },
                     textStyle = TextStyle(color = Color.White),
+                    visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                errorMessage?.let {
+                    Text(text = it, color = Color(0xFFFF0000))
+                }
+
                 Button(
-                    onClick = onLogIn,
+                    onClick = {
+                        errorMessage = null
+                        isLoading = true
+                        scope.launch {
+                            val result = onLogin(email.trim(), password)
+                            isLoading = false
+                            result
+                                .onSuccess { onLoginSuccess() }
+                                .onFailure { errorMessage = it.message ?: "Login failed. Please check your credentials."}
+                        }
+                    },
+                    enabled = !isLoading,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFB778), contentColor = Color.Black),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Log In")
+                    if (isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    } else {
+                        Text("Log In")
+                    }
                 }
+
+                TextButton(onClick = onNavigateToSignUp) {
+                    Text("First time? Sign Up")
+                }
+
             }
         }
     }

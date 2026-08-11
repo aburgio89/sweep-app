@@ -11,6 +11,7 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object DoomBoxCapture : Screen("doombox_capture")
     data object Confirmation : Screen("confirmation")
+    data object SignUp : Screen("sign-up")
 
     data object Sweep : Screen("sweep/{sweepNumber}") {
         fun createRoute(sweepNumber: Int) = "sweep/$sweepNumber"

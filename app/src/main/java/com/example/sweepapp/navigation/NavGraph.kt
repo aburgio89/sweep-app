@@ -8,30 +8,53 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.sweepapp.data.AccountSettingsRepository
 import com.example.sweepapp.data.AppDataRepository
+import com.example.sweepapp.data.AuthRepository
 import com.example.sweepapp.ui.screens.AccountSettingsScreen
 import com.example.sweepapp.ui.screens.ConfirmationScreen
 import com.example.sweepapp.ui.screens.DoomBoxCaptureScreen
 import com.example.sweepapp.ui.screens.DoomBoxListScreen
 import com.example.sweepapp.ui.screens.HomeScreen
 import com.example.sweepapp.ui.screens.LoginScreen
+import com.example.sweepapp.ui.screens.SignUpScreen
 import com.example.sweepapp.ui.screens.SweepScreen
 
 @Composable
 fun SweepAppNavGraph(
     navController: NavHostController = rememberNavController()
 ) {
+    val startDestination = if (AuthRepository.isLoggedIn) Screen.Home.route else Screen.Login.route
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = startDestination
     ) {
         //LOGIN
         composable(Screen.Login.route) {
-            LoginScreen(onLogIn = {
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(Screen.Login.route) {inclusive = true}
-                }
-            })
+            LoginScreen(
+                onLogin = { email, password -> AuthRepository.signIn(email, password) },
+                onLoginSuccess = {
+                    AccountSettingsRepository.updateEmailFromAuth(AuthRepository.currentUserEmail ?:"")
+                    navController.navigate(Screen.Home.route){
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToSignUp = { navController.navigate(Screen.SignUp.route) }
+            )
+        }
+
+        composable(Screen.SignUp.route) {
+            SignUpScreen(
+                onSignUp = { email, password -> AuthRepository.signUp(email, password)},
+                onSignUpSuccess = {
+                    AccountSettingsRepository.updateEmailFromAuth(AuthRepository.currentUserEmail ?: "")
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Login.route) {inclusive = true }
+                    }
+                },
+                onBackToLogin = { navController.popBackStack() }
+            )
         }
 
         //HOME
@@ -52,7 +75,13 @@ fun SweepAppNavGraph(
         //SETTINGS
         composable(Screen.Settings.route) {
             AccountSettingsScreen(
-                onBack = { navController.popBackStack() })
+                onBack = { navController.popBackStack() },
+                onSignedOut = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
+            )
         }
 
         //DOOM LIST
