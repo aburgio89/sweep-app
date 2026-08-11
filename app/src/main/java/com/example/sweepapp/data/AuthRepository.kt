@@ -6,9 +6,10 @@ import kotlinx.coroutines.tasks.await
 object AuthRepository {
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance()}
 
+    val currentUserId: String?
+        get() = auth.currentUser?.uid
     val currentUserEmail: String?
         get() = auth.currentUser?.email
-
     val isLoggedIn: Boolean
         get() = auth.currentUser != null
 

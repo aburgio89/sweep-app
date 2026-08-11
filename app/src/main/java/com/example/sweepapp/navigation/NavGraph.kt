@@ -26,6 +26,13 @@ fun SweepAppNavGraph(
 ) {
     val startDestination = if (AuthRepository.isLoggedIn) Screen.Home.route else Screen.Login.route
 
+    LaunchedEffect(Unit) {
+        AuthRepository.currentUserId?.let { uid ->
+            AppDataRepository.start(uid)
+            AccountSettingsRepository.start(uid)
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -35,7 +42,10 @@ fun SweepAppNavGraph(
             LoginScreen(
                 onLogin = { email, password -> AuthRepository.signIn(email, password) },
                 onLoginSuccess = {
-                    AccountSettingsRepository.updateEmailFromAuth(AuthRepository.currentUserEmail ?:"")
+                    AuthRepository.currentUserId?.let { uid ->
+                        AppDataRepository.start(uid)
+                        AccountSettingsRepository.start(uid)
+                    }
                     navController.navigate(Screen.Home.route){
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
@@ -48,7 +58,10 @@ fun SweepAppNavGraph(
             SignUpScreen(
                 onSignUp = { email, password -> AuthRepository.signUp(email, password)},
                 onSignUpSuccess = {
-                    AccountSettingsRepository.updateEmailFromAuth(AuthRepository.currentUserEmail ?: "")
+                    AuthRepository.currentUserId?. let { uid ->
+                        AppDataRepository.start(uid)
+                        AccountSettingsRepository.start(uid)
+                    }
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) {inclusive = true }
                     }
@@ -77,6 +90,8 @@ fun SweepAppNavGraph(
             AccountSettingsScreen(
                 onBack = { navController.popBackStack() },
                 onSignedOut = {
+                    AppDataRepository.stop()
+                    AccountSettingsRepository.stop()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) { inclusive = true }
                     }

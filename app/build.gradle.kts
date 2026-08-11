@@ -48,8 +48,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     implementation(platform("com.google.firebase:firebase-bom:34.17.0"))
-    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.1.4")
+    implementation("com.google.firebase:firebase-auth") //edited to online suggestion
+    implementation("com.google.firebase:firebase-firestore") //edited to online suggestion
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
