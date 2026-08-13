@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +47,8 @@ import java.time.temporal.ChronoUnit
 fun HomeScreen(
     onStartSweeps: () -> Unit,
     onOpenSettings: () -> Unit,
-    onViewDoomBox: () -> Unit
+    onViewDoomBox: () -> Unit,
+    onViewAboutSweep: () -> Unit
 ) {
     val doomBoxEntries by AppDataRepository.doomBoxEntries.collectAsState()
     val lastFullSweepDate by AppDataRepository.lastFullSweepDate.collectAsState()
@@ -59,9 +61,9 @@ fun HomeScreen(
     //Decay tracking
     val (sweepStatusText, sweepStatusColor) = when {
         daysSinceLastSweep == null -> "N/A" to Color.White.copy(alpha = 0.4f)
-        daysSinceLastSweep < 14L -> "$daysSinceLastSweep day${if (daysSinceLastSweep == 1L) "" else "s"} ago" to Color.White.copy(alpha = 0.4f)
-        daysSinceLastSweep < 30L -> "$daysSinceLastSweep days ago" to SweepCaution
-        else -> "$daysSinceLastSweep days ago" to SweepWarning
+        daysSinceLastSweep < 14L -> "$daysSinceLastSweep day${if (daysSinceLastSweep == 1L) "" else "s"}" to Color.White.copy(alpha = 0.4f)
+        daysSinceLastSweep < 30L -> "$daysSinceLastSweep days" to SweepCaution
+        else -> "$daysSinceLastSweep days" to SweepWarning
     }
 
     val greeting = if (accountSettings.displayName.isNotBlank()) {
@@ -118,9 +120,15 @@ fun HomeScreen(
                 fontWeight = FontWeight.Bold)
         }
 
+        Spacer(modifier = Modifier.height(4.dp))
+
         TextButton(
             onClick = onOpenSettings
-        ) { Text("Settings", color = Color.White.copy(alpha = 0.7f), fontSize = 20.sp) }
+        ) { Text("Settings", color = Color.White.copy(alpha = 0.7f), fontSize = 22.sp) }
+
+        TextButton(
+            onClick = onViewAboutSweep
+        ) { Text("About Sweep", color = Color.White.copy(alpha = 0.7f), fontSize = 22.sp) }
     }
 }
 
@@ -170,7 +178,8 @@ fun HomePreview() {
         HomeScreen(
             onStartSweeps = {},
             onViewDoomBox = {},
-            onOpenSettings = {}
+            onOpenSettings = {},
+            onViewAboutSweep = {}
         )
     }
 }

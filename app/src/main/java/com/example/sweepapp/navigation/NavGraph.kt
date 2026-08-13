@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.sweepapp.data.AccountSettingsRepository
 import com.example.sweepapp.data.AppDataRepository
 import com.example.sweepapp.data.AuthRepository
+import com.example.sweepapp.ui.screens.AboutSweepScreen
 import com.example.sweepapp.ui.screens.AccountSettingsScreen
 import com.example.sweepapp.ui.screens.ConfirmationScreen
 import com.example.sweepapp.ui.screens.DoomBoxCaptureScreen
@@ -81,6 +82,9 @@ fun SweepAppNavGraph(
                 },
                 onViewDoomBox = {
                     navController.navigate(Screen.DoomBoxList.route)
+                },
+                onViewAboutSweep = {
+                    navController.navigate(Screen.AboutSweep.createRoute(1))
                 }
             )
         }
@@ -94,6 +98,27 @@ fun SweepAppNavGraph(
                     AccountSettingsRepository.stop()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        //ABOUT
+        composable(Screen.AboutSweep.route,
+            arguments = listOf(navArgument("pageNumber") { type = NavType.IntType})
+        ) {
+            backStackEntry ->
+            val pageNumber = backStackEntry.arguments?.getInt("pageNumber") ?: 1
+            AboutSweepScreen(
+                pageNumber = pageNumber,
+                onNext = {
+                    navController.navigate(Screen.AboutSweep.createRoute(pageNumber + 1)) {
+                        popUpTo(Screen.AboutSweep.createRoute(pageNumber)) { inclusive = true }
+                    }
+                },
+                onClose = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 }
             )

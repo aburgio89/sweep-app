@@ -11,4 +11,29 @@
         <item>PLACEHOLDER: Time to return everything to its home. Go through the clutter container one item at a time,</item>
             starting with items that live in this room. Then return items that live in other rooms.
     </string-array>
+
+<!--    About page strings-->
+    <string name="about_sweep_text1">Does your space ever feel like this?</string>
+    <string name="about_sweep_text2">You recognize all the individual shapes</string>
+    <string name="about_sweep_text3">but together, it\'s a chaotic mess.</string>
+    <string name="about_sweep_text4">What if we skip the linear approach and find a single-focus?</string>
+    <string name="about_sweep_text5">And then another</string>
+    <string name="about_sweep_text6">and another</string>
+    <string name="about_sweep_text7">""</string>
+    <string name="about_sweep_text8">""</string>
+    <string name="about_sweep_text9">"Your mess is not invincible. \n\nYou just need the right strategy."</string>
+    <string name="about_sweep_text10">"Sweep helps you tackle any space by breaking down your cleaning routine into single-focus passes.
+        \n\nThe steps are simple."</string>
+    <string name="about_sweep_text11">"Forget about perfection.
+        \n\nThis is about taking that first step and harnessing your momentum."</string>
+    <string name="about_sweep_text12">Now go forth... \n\nand SWEEP!</string>
+
+    <string name="about_sweep_cascade1">Trash.</string>
+    <string name="about_sweep_cascade2">Recycling.</string>
+    <string name="about_sweep_cascade3">Dishes.</string>
+    <string name="about_sweep_cascade4">Laundry.</string>
+    <string name="about_sweep_cascade5">Clutter.</string>
+    <string name="about_sweep_cascade6">Clean.</string>
+    <string name="about_sweep_cascade7">Return.</string>
+
 </resources>

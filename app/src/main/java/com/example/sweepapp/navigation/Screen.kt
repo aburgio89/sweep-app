@@ -13,6 +13,10 @@ sealed class Screen(val route: String) {
     data object Confirmation : Screen("confirmation")
     data object SignUp : Screen("sign-up")
 
+    data object AboutSweep : Screen("about_sweep/{pageNumber}") {
+        fun createRoute(pageNumber: Int) = "about_sweep/$pageNumber"
+    }
+
     data object Sweep : Screen("sweep/{sweepNumber}") {
         fun createRoute(sweepNumber: Int) = "sweep/$sweepNumber"
     }

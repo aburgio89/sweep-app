@@ -31,3 +31,9 @@ fun Typography() = Typography(
         fontSize = 18.sp
     )
 )
+
+val AboutSweepStyle = TextStyle(
+    fontFamily = MontserratFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 30.sp
+)
