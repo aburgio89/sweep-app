@@ -37,7 +37,10 @@ import com.example.sweepapp.data.AccountSettingsRepository
 import com.example.sweepapp.data.AppDataRepository
 import com.example.sweepapp.ui.theme.SweepAccent
 import com.example.sweepapp.ui.theme.SweepAppTheme
+import com.example.sweepapp.ui.theme.SweepCaution
+import com.example.sweepapp.ui.theme.SweepWarning
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun HomeScreen(
@@ -50,13 +53,21 @@ fun HomeScreen(
     val accountSettings by AccountSettingsRepository.settings.collectAsState()
     val outstandingCount = doomBoxEntries.count {!it.resolved }
     val hasOutstanding = outstandingCount > 0
-    val lastSweepText = lastFullSweepDate?.format(DateTimeFormatter.ofPattern("MMM d"))
-        ?: "N/A"
+    val daysSinceLastSweep = lastFullSweepDate?.let {
+        ChronoUnit.DAYS.between(it, java.time.LocalDate.now())
+    }
+    //Decay tracking
+    val (sweepStatusText, sweepStatusColor) = when {
+        daysSinceLastSweep == null -> "N/A" to Color.White.copy(alpha = 0.4f)
+        daysSinceLastSweep < 14L -> "$daysSinceLastSweep day${if (daysSinceLastSweep == 1L) "" else "s"} ago" to Color.White.copy(alpha = 0.4f)
+        daysSinceLastSweep < 30L -> "$daysSinceLastSweep days ago" to SweepCaution
+        else -> "$daysSinceLastSweep days ago" to SweepWarning
+    }
 
     val greeting = if (accountSettings.displayName.isNotBlank()) {
         "Welcome back, ${accountSettings.displayName}."
     } else {
-        "Shall we get started?"
+        "Find your momentum."
     }
 
     ScreenScaffold(
@@ -86,8 +97,8 @@ fun HomeScreen(
             )
             StatCard(
                 label = "Last Full Sweep",
-                value = lastSweepText,
-                accent = Color.White.copy(alpha = 0.4f),
+                value = sweepStatusText,
+                accent = sweepStatusColor,
                 onClick = null,
                 modifier = Modifier.weight(1f).fillMaxHeight()
             )

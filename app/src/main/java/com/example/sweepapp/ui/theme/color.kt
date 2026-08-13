@@ -6,6 +6,8 @@ import androidx.compose.ui.graphics.Color
 val SweepPrimary = Color(0xFFFFE7D1)
 val SweepBackground = Color(0xFF32323B)
 val SweepAccent = Color(0xFFEB6767)
+val SweepCaution = Color(0xFFE0C05C)
+val SweepWarning = Color(0xFFE17544)
 
 val SweepAccentColors = listOf(
     Color(0xFFEB6767), //Trash
