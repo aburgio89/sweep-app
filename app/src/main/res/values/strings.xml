@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+<!--    Sweep page descriptors-->
     <string-array name="sweep_descriptions">
         <item>PLACEHOLDER: Gather all trash into a trash bag.</item>
         <item>PLACEHOLDER: Gather all recyclable items into a recycle container.</item>
@@ -10,6 +11,17 @@
         <item>PLACEHOLDER: Wipe down all horizontal surfaces. Depending on your floor type, sweep, mop, or vacuum. </item>
         <item>PLACEHOLDER: Time to return everything to its home. Go through the clutter container one item at a time,</item>
             starting with items that live in this room. Then return items that live in other rooms.
+    </string-array>
+
+<!--    Individual sweep faqs-->
+    <string-array name="sweep_faqs">
+        <item>FAQ for Trash Sweep</item>
+        <item>FAQ for Recycle Sweep</item>
+        <item>FAQ for Dishes Sweep</item>
+        <item>FAQ for Laundry Sweep</item>
+        <item>FAQ for Clutter Sweep</item>
+        <item>FAQ for Clean Sweep</item>
+        <item>FAQ for Return Sweep</item>
     </string-array>
 
 <!--    About page strings-->

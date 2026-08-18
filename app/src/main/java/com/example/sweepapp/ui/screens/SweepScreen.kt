@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -20,7 +21,12 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.example.sweepapp.R
 import com.example.sweepapp.ui.theme.SweepAccentColors
 import com.example.sweepapp.ui.theme.SweepAppTheme
+import com.example.sweepapp.ui.theme.SweepBackground
 
 @Composable
 fun SweepScreen(
@@ -42,13 +49,14 @@ fun SweepScreen(
     sweepName: String,
     totalSweeps: Int,
     description: String = stringArrayResource(id= R.array.sweep_descriptions)[sweepNumber -1],
+    faqText: String = stringArrayResource(id = R.array.sweep_faqs)[sweepNumber -1],
     accentColor: Color = SweepAccentColors[sweepNumber -1],
     onComplete: () -> Unit,
-    onCancel: () -> Unit,
-    onFaqClick: () -> Unit = {}
+    onCancel: () -> Unit
 ) {
     val isLastSweep = sweepNumber == totalSweeps
     val doneButtonTextColor = if (accentColor.luminance() > 0.5f) Color(0xFF32323B) else Color.White
+    var showFaqDialog by remember { mutableStateOf(false) }
 
     ScreenScaffold(
         title = "Sweep $sweepNumber: $sweepName") {
@@ -81,7 +89,7 @@ fun SweepScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         OutlinedButton(
-            onClick = onFaqClick,
+            onClick = { showFaqDialog = true },
             shape = CircleShape,
             border = BorderStroke(4.dp, accentColor),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = accentColor),
@@ -126,6 +134,23 @@ fun SweepScreen(
                     fontWeight = FontWeight.Bold)
             }
         }
+    }
+
+    if (showFaqDialog) {
+        AlertDialog(
+            onDismissRequest = { showFaqDialog = false },
+            title = { Text("Sweep $sweepNumber: $sweepName") },
+            text = { Text(faqText) },
+            confirmButton = {
+                TextButton(onClick = { showFaqDialog = false },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Color.Black
+                    )) {
+                    Text("Continue")
+                }
+            },
+            titleContentColor = SweepBackground
+        )
     }
 }
 
