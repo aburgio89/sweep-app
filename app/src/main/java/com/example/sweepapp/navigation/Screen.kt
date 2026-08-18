@@ -20,6 +20,8 @@ sealed class Screen(val route: String) {
     data object Sweep : Screen("sweep/{sweepNumber}") {
         fun createRoute(sweepNumber: Int) = "sweep/$sweepNumber"
     }
+
+    data object DoomBoxReport : Screen("doom_box_report")
 }
 //Indexed order, 0=Trash, 1=Recycling, etc.
 val sweepNames = listOf(

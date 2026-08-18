@@ -16,6 +16,7 @@ import com.example.sweepapp.ui.screens.AccountSettingsScreen
 import com.example.sweepapp.ui.screens.ConfirmationScreen
 import com.example.sweepapp.ui.screens.DoomBoxCaptureScreen
 import com.example.sweepapp.ui.screens.DoomBoxListScreen
+import com.example.sweepapp.ui.screens.DoomBoxReportScreen
 import com.example.sweepapp.ui.screens.HomeScreen
 import com.example.sweepapp.ui.screens.LoginScreen
 import com.example.sweepapp.ui.screens.SignUpScreen
@@ -127,6 +128,14 @@ fun SweepAppNavGraph(
         //DOOM LIST
         composable(Screen.DoomBoxList.route) {
             DoomBoxListScreen(
+                onBack = { navController.popBackStack() },
+                onViewReport = { navController.navigate(Screen.DoomBoxReport.route) }
+            )
+        }
+
+        //DOOM REPORT
+        composable(Screen.DoomBoxReport.route) {
+            DoomBoxReportScreen(
                 onBack = { navController.popBackStack() }
             )
         }

@@ -39,7 +39,8 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DoomBoxListScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onViewReport: () -> Unit
 ) {
     val allEntries by AppDataRepository.doomBoxEntries.collectAsState()
     val outstandingEntries = allEntries.filter { !it.resolved }
@@ -63,7 +64,11 @@ fun DoomBoxListScreen(
                 }
             }
         }
+        TextButton(onClick = onViewReport) {
+            Text("View Full History")
+        }
     }
+
     entryPendingResolve?.let { entry ->
         AlertDialog(
             onDismissRequest = { entryPendingResolve = null },
