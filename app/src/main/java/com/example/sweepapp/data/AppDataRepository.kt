@@ -1,6 +1,7 @@
 package com.example.sweepapp.data
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
@@ -13,48 +14,39 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.UUID
 
-object AppDataRepository {
-    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
-
-    private var userDocListener: ListenerRegistration? = null
-    private var doomBoxListener: ListenerRegistration? = null
-
+object AppDataRepository : UserScopedFirestoreRepository() {
     private val _doomBoxEntries = MutableStateFlow<List<DoomBoxEntry>>(emptyList())
     val doomBoxEntries: StateFlow<List<DoomBoxEntry>> = _doomBoxEntries.asStateFlow()
 
     private val _lastFullSweepDate = MutableStateFlow<LocalDate?>(null)
     val lastFullSweepDate: StateFlow<LocalDate?> = _lastFullSweepDate.asStateFlow()
 
-    fun start(uid: String) {
-        stop()
-
-        val userDoc = db.collection("users").document(uid)
-
-        userDocListener = userDoc.addSnapshotListener { snapshot, _ ->
-            _lastFullSweepDate.value = snapshot?.getTimestamp("lastFullSweepDate")?.toLocalDate()
-        }
-
-        doomBoxListener = userDoc.collection("doomBoxEntries")
-            .addSnapshotListener { snapshot, _ ->
-                _doomBoxEntries.value = snapshot?.documents?.mapNotNull { doc ->
-                    val name = doc.getString("name") ?: return@mapNotNull null
-                    val created = doc.getTimestamp("dateCreated") ?: return@mapNotNull null
-                    DoomBoxEntry (
-                        id = doc.id,
-                        name = name,
-                        note = doc.getString("note"),
-                        dateCreated = created.toLocalDate(),
-                        resolved = doc.getBoolean("resolved") ?: false
-                    )
-                } ?: emptyList()
+    override fun onStart(userDoc: DocumentReference) {
+        track(
+            userDoc.addSnapshotListener { snapshot, _ ->
+                _lastFullSweepDate.value = snapshot?.getTimestamp("lastFullSweepDate")?.toLocalDate()
             }
+        )
+
+        track(
+            userDoc.collection("doomBoxEntries")
+                .addSnapshotListener { snapshot, _ ->
+                    _doomBoxEntries.value = snapshot?.documents?.mapNotNull { doc ->
+                        val name = doc.getString("name") ?: return@mapNotNull null
+                        val created = doc.getTimestamp("dateCreated") ?: return@mapNotNull null
+                        DoomBoxEntry (
+                            id = doc.id,
+                            name = name,
+                            note = doc.getString("note"),
+                            dateCreated = created.toLocalDate(),
+                            resolved = doc.getBoolean("resolved") ?: false
+                        )
+                    } ?: emptyList()
+                }
+        )
     }
 
-    fun stop() {
-        userDocListener?.remove()
-        doomBoxListener?.remove()
-        userDocListener = null
-        doomBoxListener = null
+    override fun onStop() {
         _doomBoxEntries.value = emptyList()
         _lastFullSweepDate.value = null
     }
@@ -81,10 +73,6 @@ object AppDataRepository {
         val userDoc = currentUserDoc() ?: return
         userDoc.set(mapOf("lastFullSweepDate" to Date()), SetOptions.merge())
     }
-
-    private fun currentUserDoc() =
-        AuthRepository.currentUserId?.let { uid -> db.collection("users").document(uid) }
-
     private fun Timestamp.toLocalDate(): LocalDate =
         Instant.ofEpochSecond(seconds, nanoseconds.toLong()).atZone(ZoneId.systemDefault()).toLocalDate()
 }
