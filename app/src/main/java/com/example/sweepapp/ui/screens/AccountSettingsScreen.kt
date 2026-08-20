@@ -1,6 +1,5 @@
 package com.example.sweepapp.ui.screens
 
-import android.accounts.Account
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,9 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.example.sweepapp.data.AccountSettings
 import com.example.sweepapp.data.AccountSettingsRepository
 import com.example.sweepapp.data.AuthRepository
-import com.example.sweepapp.ui.theme.SweepAccent
-import com.example.sweepapp.ui.theme.SweepBackground
-import com.example.sweepapp.ui.theme.SweepPrimary
 import kotlinx.coroutines.launch
 
 @Composable

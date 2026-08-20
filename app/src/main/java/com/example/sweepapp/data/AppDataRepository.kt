@@ -2,8 +2,6 @@ package com.example.sweepapp.data
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +10,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
-import java.util.UUID
 
 object AppDataRepository : UserScopedFirestoreRepository() {
     private val _doomBoxEntries = MutableStateFlow<List<DoomBoxEntry>>(emptyList())
