@@ -13,6 +13,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
@@ -22,9 +23,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.sweepapp.data.AccountSettings
@@ -33,6 +36,7 @@ import com.example.sweepapp.data.AuthRepository
 import com.example.sweepapp.ui.theme.SweepAccent
 import com.example.sweepapp.ui.theme.SweepBackground
 import com.example.sweepapp.ui.theme.SweepPrimary
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountSettingsScreen(
@@ -66,9 +70,13 @@ private fun AccountSettingsContent(
     onSignOut: () -> Unit
 ) {
     var nameDraft by remember(settings.displayName) { mutableStateOf(settings.displayName) }
-    var nameChanged = nameDraft != settings.displayName
+    var nameChanged = nameDraft.trim() != settings.displayName && nameDraft.isNotBlank()
 
-    ScreenScaffold(title = "Account Settings", onBack = onBack) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+
+    ScreenScaffold(title = "Account Settings", onBack = onBack, snackbarHostState = snackbarHostState) {
 
         Text("Profile", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
 
@@ -81,7 +89,12 @@ private fun AccountSettingsContent(
 
         if (nameChanged) {
             Button(
-                onClick = { onSaveName(nameDraft) },
+                onClick = {
+                    focusManager.clearFocus() //Should suppress on-screen keyboard
+                    val trimmedName = nameDraft.trim()
+                    onSaveName(trimmedName)
+                    scope.launch { snackbarHostState.showSnackbar("Name Updated") }
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Name")
