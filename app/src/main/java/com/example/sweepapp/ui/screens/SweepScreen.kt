@@ -33,33 +33,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.sweepapp.R
-import com.example.sweepapp.ui.theme.SweepAccentColors
-import com.example.sweepapp.ui.theme.SweepAppTheme
+import com.example.sweepapp.data.SweepCategory
 import com.example.sweepapp.ui.theme.SweepBackground
 
 @Composable
 fun SweepScreen(
+    category: SweepCategory,
     sweepNumber: Int,
-    sweepName: String,
     totalSweeps: Int,
-    description: String = stringArrayResource(id= R.array.sweep_descriptions)[sweepNumber -1],
-    faqText: String = stringArrayResource(id = R.array.sweep_faqs)[sweepNumber -1],
-    accentColor: Color = SweepAccentColors[sweepNumber -1],
     onComplete: () -> Unit,
     onCancel: () -> Unit
 ) {
     val isLastSweep = sweepNumber == totalSweeps
-    val doneButtonTextColor = if (accentColor.luminance() > 0.5f) Color(0xFF32323B) else Color.White
     var showFaqDialog by remember { mutableStateOf(false) }
+    val accentColor = Color(android.graphics.Color.parseColor(category.colorHex))
+    val doneButtonTextColor = if (accentColor.luminance() > 0.5f) Color.Black else Color.White
 
     ScreenScaffold(
-        title = "Sweep $sweepNumber: $sweepName") {
+        title = "Sweep $sweepNumber: ${ category.name }",
+        titleContent = {
+            Row{
+            Text(text = "Sweep $sweepNumber: ", style = MaterialTheme.typography.headlineMedium)
+            Text(text = category.name, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            }
+        }
+    ) {
         Image(
             painter = painterResource(id = R.drawable.sweep_monster),
             contentDescription = null,
@@ -69,7 +71,7 @@ fun SweepScreen(
         )
 
         Text(
-            text = description,
+            text = category.description,
             textAlign = TextAlign.Center
         )
 
@@ -131,7 +133,7 @@ fun SweepScreen(
             ) {
                 Text(if (isLastSweep) "Complete!" else "Next!",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold,)
             }
         }
     }
@@ -139,8 +141,8 @@ fun SweepScreen(
     if (showFaqDialog) {
         AlertDialog(
             onDismissRequest = { showFaqDialog = false },
-            title = { Text("Sweep $sweepNumber: $sweepName") },
-            text = { Text(faqText) },
+            title = { Text("Sweep $sweepNumber: ${category.name}") },
+            text = { Text(category.faq) },
             confirmButton = {
                 TextButton(onClick = { showFaqDialog = false },
                     colors = ButtonDefaults.textButtonColors(
@@ -150,20 +152,6 @@ fun SweepScreen(
                 }
             },
             titleContentColor = SweepBackground
-        )
-    }
-}
-
-@Preview
-@Composable
-fun SweepPreview() {
-    SweepAppTheme {
-        SweepScreen(
-            sweepNumber = 3,
-            sweepName = "Dishes",
-            totalSweeps = 7,
-            onComplete = {},
-            onCancel = {}
         )
     }
 }

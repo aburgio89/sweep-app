@@ -2,6 +2,7 @@ package com.example.sweepapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.sweepapp.data.AccountSettingsRepository
 import com.example.sweepapp.data.AppDataRepository
 import com.example.sweepapp.data.AuthRepository
+import com.example.sweepapp.data.SweepCategoryRepository
 import com.example.sweepapp.ui.screens.AboutSweepScreen
 import com.example.sweepapp.ui.screens.AccountSettingsScreen
 import com.example.sweepapp.ui.screens.ConfirmationScreen
@@ -21,6 +23,8 @@ import com.example.sweepapp.ui.screens.HomeScreen
 import com.example.sweepapp.ui.screens.LoginScreen
 import com.example.sweepapp.ui.screens.SignUpScreen
 import com.example.sweepapp.ui.screens.SweepScreen
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun SweepAppNavGraph(
@@ -32,6 +36,7 @@ fun SweepAppNavGraph(
         AuthRepository.currentUserId?.let { uid ->
             AppDataRepository.start(uid)
             AccountSettingsRepository.start(uid)
+            SweepCategoryRepository.start()
         }
     }
 
@@ -47,6 +52,7 @@ fun SweepAppNavGraph(
                     AuthRepository.currentUserId?.let { uid ->
                         AppDataRepository.start(uid)
                         AccountSettingsRepository.start(uid)
+                        SweepCategoryRepository.start()
                     }
                     navController.navigate(Screen.Home.route){
                         popUpTo(Screen.Login.route) { inclusive = true }
@@ -63,6 +69,7 @@ fun SweepAppNavGraph(
                     AuthRepository.currentUserId?. let { uid ->
                         AppDataRepository.start(uid)
                         AccountSettingsRepository.start(uid)
+                        SweepCategoryRepository.start()
                     }
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Login.route) {inclusive = true }
@@ -97,6 +104,7 @@ fun SweepAppNavGraph(
                 onSignedOut = {
                     AppDataRepository.stop()
                     AccountSettingsRepository.stop()
+                    SweepCategoryRepository.stop()
                     navController.navigate(Screen.Login.route) {
                         popUpTo(navController.graph.id) { inclusive = true }
                     }
@@ -141,32 +149,45 @@ fun SweepAppNavGraph(
         }
 
         //SWEEP
-        composable(Screen.Sweep.route,
+        composable(route = Screen.Sweep.route,
         arguments = listOf(navArgument("sweepNumber") {type = NavType.IntType})) {
             backStackEntry ->
             val sweepNumber = backStackEntry.arguments?.getInt("sweepNumber") ?: 1
-            SweepScreen(
-                sweepNumber = sweepNumber,
-                sweepName = sweepNames[sweepNumber -1],
-                totalSweeps = sweepNames.size,
-                onComplete = {
-                    if (sweepNumber < sweepNames.size) {
-                        navController.navigate(Screen.Sweep.createRoute(sweepNumber + 1)) {
-                            popUpTo(Screen.Sweep.createRoute(sweepNumber)) {inclusive = true}
-                        }
-                    }
-                    else {
-                        navController.navigate(Screen.DoomBoxCapture.route + "?full=true") {
-                            popUpTo(Screen.Home.route) {inclusive = false}
-                        }
-                    }
-                },
-                onCancel = {
-                    navController.navigate(Screen.DoomBoxCapture.route + "?full=false") {
-                        popUpTo(Screen.Home.route) {inclusive=false}
+            val categories by SweepCategoryRepository.categories.collectAsState()
+
+            if (categories.isEmpty() || sweepNumber > categories.size) {
+                LaunchedEffect(Unit) {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Home.route) {inclusive = true}
                     }
                 }
-            )
+            }
+            else {
+                SweepScreen(
+                    category = categories[sweepNumber - 1],
+                    sweepNumber = sweepNumber,
+                    totalSweeps = categories.size,
+                    onComplete = {
+                        if (sweepNumber < categories.size) {
+                            navController.navigate(Screen.Sweep.createRoute(sweepNumber + 1)) {
+                                popUpTo(Screen.Sweep.createRoute(sweepNumber)) {inclusive = true}
+                            }
+                        }
+                        else {
+                            navController.navigate(Screen.DoomBoxCapture.route + "?full=true") {
+                                popUpTo(Screen.Home.route) {inclusive = false}
+                            }
+                        }
+                    },
+                    onCancel = {
+                        navController.navigate(Screen.DoomBoxCapture.route + "?full=false") {
+                            popUpTo(Screen.Home.route) {inclusive=false}
+                        }
+                    }
+                )
+            }
+
+
         }
 
         //DOOM BOX

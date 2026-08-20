@@ -23,13 +23,3 @@ sealed class Screen(val route: String) {
 
     data object DoomBoxReport : Screen("doom_box_report")
 }
-//Indexed order, 0=Trash, 1=Recycling, etc.
-val sweepNames = listOf(
-    "Trash",
-    "Recycle",
-    "Dishes",
-    "Laundry",
-    "Clutter",
-    "Clean",
-    "Return"
-)
