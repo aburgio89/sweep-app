@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sweepapp.R
 import com.example.sweepapp.data.SweepCategory
+import com.example.sweepapp.data.SweepImageMap
 import com.example.sweepapp.ui.theme.SweepBackground
 
 @Composable
@@ -51,7 +52,6 @@ fun SweepScreen(
     val isLastSweep = sweepNumber == totalSweeps
     var showFaqDialog by remember { mutableStateOf(false) }
     val accentColor = Color(android.graphics.Color.parseColor(category.colorHex))
-    val doneButtonTextColor = if (accentColor.luminance() > 0.5f) Color.Black else Color.White
 
     ScreenScaffold(
         title = "Sweep $sweepNumber: ${ category.name }",
@@ -63,7 +63,7 @@ fun SweepScreen(
         }
     ) {
         Image(
-            painter = painterResource(id = R.drawable.sweep_monster),
+            painter = painterResource(id = SweepImageMap.resolve(category.imageKey)),
             contentDescription = null,
             colorFilter = ColorFilter.tint(accentColor),
             alignment = Alignment.Center,
@@ -127,7 +127,7 @@ fun SweepScreen(
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = accentColor,
-                    contentColor = doneButtonTextColor
+                    contentColor = SweepBackground
                 ),
                 modifier = Modifier.weight(1f).height(64.dp)
             ) {

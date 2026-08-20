@@ -55,7 +55,7 @@ fun ConfirmationScreen(
     ScreenScaffold(title = title) {
         if(wasFullSweep) {
             Image(
-                painter = painterResource(id = R.drawable.sweepmonster_happy),
+                painter = painterResource(id = R.drawable.sweep_complete),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(SweepPrimary),
                 modifier = Modifier

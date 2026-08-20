@@ -25,7 +25,8 @@ object SweepCategoryRepository {
                         name = name,
                         colorHex = doc.getString("colorHex") ?: "#FFFFFF",
                         description = doc.getString("description") ?: "",
-                        faq = doc.getString("faq") ?: ""
+                        faq = doc.getString("faq") ?: "",
+                        imageKey = doc.getString("imageKey") ?: "sweep1icon"
                     )
                 } ?: emptyList()
             }

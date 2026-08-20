@@ -9,5 +9,6 @@ data class SweepCategory(
     val name: String,
     val colorHex: String,
     val description: String,
-    val faq: String
+    val faq: String,
+    val imageKey: String
 )
