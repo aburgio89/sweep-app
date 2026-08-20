@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+
+//Email format validation
+private val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
+//Password format validation
+private fun isValidPassword(password: String): Boolean {
+    return password.length >= 6 &&
+            password.any { it.isLetter() } &&
+            password.any { it.isDigit() }
+}
 
 @Composable
 fun SignUpScreen(
@@ -56,6 +67,10 @@ fun SignUpScreen(
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
+        Text(
+            text = "Password must be at least 6 characters, including 1 letter and 1 number.",
+            style = MaterialTheme.typography.bodyLarge.copy(color = Color.White.copy(alpha = 0.6f))
+        )
 
         errorMessage?.let {
             Text(text = it, color = Color(0xFFFF0000))
@@ -63,18 +78,24 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                if (password != confirmPassword) {
-                    errorMessage = "Passwords do not match."
-                    return@Button
+                val trimmedEmail = email.trim()
+                errorMessage = when {
+                    !emailRegex.matches(trimmedEmail) ->
+                        "Please enter a valid email address."
+                    !isValidPassword(password) ->
+                        "Password does not meet requirements."
+                    password != confirmPassword ->
+                        "Passwords do not match."
+                    else -> null
                 }
-                errorMessage = null
-                isLoading = true
-                scope.launch {
-                    val result = onSignUp(email.trim(), password)
-                    isLoading = false
-                    result
-                        .onSuccess { onSignUpSuccess() }
-                        .onFailure { errorMessage = it.message ?: "Sign up failed. Please try again." }
+
+                if (errorMessage == null) {
+                    isLoading = true
+                    scope.launch {
+                        val result = onSignUp(trimmedEmail, password)
+                        isLoading = false
+                        result.onSuccess { onSignUpSuccess() }.onFailure { errorMessage = it.message ?: "Sign up failed." }
+                    }
                 }
             },
             enabled = !isLoading,
