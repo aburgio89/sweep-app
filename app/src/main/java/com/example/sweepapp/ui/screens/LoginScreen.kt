@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sweepapp.R
+import com.example.sweepapp.util.validateLoginInput
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -141,14 +142,22 @@ fun LoginScreen(
 
                 Button(
                     onClick = {
-                        errorMessage = null
-                        isLoading = true
-                        scope.launch {
-                            val result = onLogin(email.trim(), password)
-                            isLoading = false
-                            result
-                                .onSuccess { onLoginSuccess() }
-                                .onFailure { errorMessage = it.message ?: "Login failed. Please check your credentials."}
+                        val validationError = validateLoginInput(email.trim(), password)
+                        if (validationError != null) {
+                            errorMessage = validationError
+                        } else {
+                            errorMessage = null
+                            isLoading = true
+                            scope.launch {
+                                val result = onLogin(email.trim(), password)
+                                isLoading = false
+                                result
+                                    .onSuccess { onLoginSuccess() }
+                                    .onFailure {
+                                        errorMessage = it.message
+                                            ?: "Login failed. Please check your credentials."
+                                    }
+                            }
                         }
                     },
                     enabled = !isLoading,

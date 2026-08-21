@@ -54,4 +54,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore") //edited to online suggestion
 
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    testImplementation("junit:junit:4.13.2")
 }
